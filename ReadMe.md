@@ -1,5 +1,4 @@
 ```mermaid
-linklite
 sequenceDiagram
     participant Client
     participant URLController
@@ -14,5 +13,12 @@ sequenceDiagram
     URLService-->>URLController: shortUrl
     URLController-->>Client: Return short URL
 
-    Client->>URLController: GET /{sho
+    Client->>URLController: GET /{shortCode}
+    URLController->>URLService: GetOriginalUrl(shortCode)
+    URLService->>URLRepository: FindByShortCode(shortCode)
+    URLRepository-->>URLService: longUrl
+    URLService->>AnalyticsService: LogClick(shortCode, userAgent, referrer)
+    AnalyticsService->>URLRepository: SaveClickData()
+    URLService-->>URLController: longUrl
+    URLController-->>Client: Redirect to longUrl
 ```
